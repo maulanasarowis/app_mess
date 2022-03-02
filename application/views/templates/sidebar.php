@@ -44,7 +44,7 @@
 
         <?php foreach ($subMenu as $sm) : ?>
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item <?= $title == $sm['title'] ? 'active' : ''?>">
+            <li class="nav-item">
                 <a class="nav-link" href="<?= base_url($sm['url'])?>" <?= $sm['html_data_toggle']?>>
                     <i class="<?= $sm['icon'] ?>"></i>
                     <span><?= $sm['title']?></span>
@@ -64,7 +64,7 @@
                 <div <?= $sm['html_id']?> class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                     <?php foreach ($subSubMenu as $ssm) : ?>
-                            <a class="collapse-item" href="<?= base_url('admin/departemen'); ?>"><?= $ssm['title']?></a>
+                            <a class="collapse-item" href="<?= base_url($ssm['url']); ?>"><?= $ssm['title']?></a>
                     <?php endforeach; ?>
                     </div>
                 </div>
