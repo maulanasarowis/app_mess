@@ -19,7 +19,7 @@ class C_auth extends CI_Controller
             'required'      => 'Bidang Password wajib diisi',
         ]);
         if ($this->form_validation->run() ==  false) {
-            $data['title'] = 'User Login';
+            $data['title'] = 'App Mess - User Login';
             $this->load->view('templates/auth_header', $data);
             $this->load->view('auth/V_login');
             $this->load->view('templates/auth_footer');
@@ -81,7 +81,7 @@ class C_auth extends CI_Controller
         $this->form_validation->set_rules('password2', 'Password', 'required|trim|matches[password1]');
 
         if ($this->form_validation->run() ==  false) {
-            $data['title'] = 'User Registration';
+            $data['title'] = 'App Mess - User Registration';
             $this->load->view('templates/auth_header', $data);
             $this->load->view('auth/V_registration');
             $this->load->view('templates/auth_footer');
@@ -109,5 +109,9 @@ class C_auth extends CI_Controller
         $this->session->unset_userdata('role_id');
         $this->session->set_flashdata('massage', '<div class="alert alert-success" role="alert">Anda telah logout</div>');
         redirect('C_auth');
+    }
+
+    public function blocked(){
+        echo 'blocked';
     }
 }

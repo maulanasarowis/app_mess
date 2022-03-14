@@ -9,6 +9,7 @@ class C_transaksi extends CI_Controller
 		$this->load->model('M_transaksi');
 		$this->load->model('M_approval');
 		$this->load->model('M_kamar');
+		is_logged_in();
 	}
 
 	public function index()
@@ -40,6 +41,10 @@ class C_transaksi extends CI_Controller
 
 	public function save()
 	{
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
+
 		$id_karyawan 	= $this->input->post('id_karyawan');
 		$id_mess 		= $this->input->post('id_mess');
 		$id_kamar 		= $this->input->post('id_kamar');
@@ -51,14 +56,14 @@ class C_transaksi extends CI_Controller
 				'id_mess' 			=>	$id_mess,
 				'id_kamar' 			=>	$id_kamar,
 				'created_at' 		=> 	date('Y-m-d H:i:s'),
-				'created_by' 		=> 'admin',
+				'created_by' 		=> $getNameSession,
 			);
 		} else {
 			$data = array(
 				'id_karyawan' 		=> 	$id_karyawan,
 				'id_mess' 			=>	$id_mess,
 				'created_at' 		=> 	date('Y-m-d H:i:s'),
-				'created_by' 		=> 'admin',
+				'created_by' 		=> $getNameSession,
 			);
 		}
 
@@ -79,7 +84,7 @@ class C_transaksi extends CI_Controller
 			$data = array(
 				'is_available' 	=> 0,
 				'updated_at' 	=> 	date('Y-m-d H:i:s'),
-				'updated_by' 	=> 'admin',
+				'updated_by' 	=> $getNameSession,
 			);
 
 			$sql = $this->M_transaksi->setKamarUse($where, $data);
@@ -155,13 +160,16 @@ class C_transaksi extends CI_Controller
 
 	function delete($id_trx_mess)
 	{
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
 
 		$data = array(
 			'id_trx_mess' 	=> $id_trx_mess,
 			// 'id_kamar'	=> $get_id_kamar->id_kamar,
 			'status' 		=> 0,
 			'updated_at' 	=> date('Y-m-d H:i:s'),
-			'updated_by' 	=> 'admin',
+			'updated_by' 	=> $getNameSession,
 		);
 
 		$where = array(
@@ -179,7 +187,7 @@ class C_transaksi extends CI_Controller
 		$data = array(
 			'is_available' 	=> 1,
 			'updated_at' 	=> 	date('Y-m-d H:i:s'),
-			'updated_by' 	=> 'admin',
+			'updated_by' 	=> $getNameSession,
 		);
 
 		$updateIsavailableKamar = $this->M_transaksi->update_data($where, $data, 'tbl_mst_kamar');
@@ -224,20 +232,24 @@ class C_transaksi extends CI_Controller
 
 	function update()
 	{
-		echo '<pre>';
-		print_r($this->input->post());
-		echo '<pre>';
+		// echo '<pre>';
+		// print_r($this->input->post());
+		// echo '<pre>';
 		// echo 'halamann update';
-		$id_trx_mess 	= $this->input->post('id_trx_mess');
-		$id_karyawan 	= $this->input->post('id_karyawan');
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
+
+		$id_trx_mess 			= $this->input->post('id_trx_mess');
+		$id_karyawan 			= $this->input->post('id_karyawan');
 		$id_mess_keluarga 		= $this->input->post('id_mess_keluarga');
 		$id_mess_lajanglk 		= $this->input->post('id_mess_lajanglk');
 		$id_mess_lajangpr 		= $this->input->post('id_mess_lajangpr');
-		$id_kamar 		= $this->input->post('id_kamar');
-		$type_mess 		= $this->input->post('type_mess');
-		$jkelamin 		= $this->input->post('jkelamin');
-		$old_keluarga 		= $this->input->post('old_keluarga');
-		$old_kamar 		= $this->input->post('old_kamar');
+		$id_kamar 				= $this->input->post('id_kamar');
+		$type_mess 				= $this->input->post('type_mess');
+		$jkelamin 				= $this->input->post('jkelamin');
+		$old_keluarga 			= $this->input->post('old_keluarga');
+		$old_kamar 				= $this->input->post('old_kamar');
 
 		if ($type_mess == 'Lajang') {
 			if ($jkelamin == 'Laki-laki') {
@@ -246,7 +258,7 @@ class C_transaksi extends CI_Controller
 					'id_mess' 			=>	$id_mess_lajanglk,
 					'id_kamar' 			=>	$id_kamar,
 					'created_at' 		=> 	date('Y-m-d H:i:s'),
-					'created_by' 		=> 'admin',
+					'created_by' 		=> 	$getNameSession,
 				);
 			} else if ($jkelamin == 'Perempuan') {
 				$data = array(
@@ -254,7 +266,7 @@ class C_transaksi extends CI_Controller
 					'id_mess' 			=>	$id_mess_lajangpr,
 					'id_kamar' 			=>	$id_kamar,
 					'created_at' 		=> 	date('Y-m-d H:i:s'),
-					'created_by' 		=> 'admin',
+					'created_by' 		=> 	$getNameSession,
 				);
 			}
 
@@ -266,7 +278,7 @@ class C_transaksi extends CI_Controller
 			$data3 = array(
 				'is_available' 	=> 0,
 				'updated_at' 	=> 	date('Y-m-d H:i:s'),
-				'updated_by' 	=> 'admin',
+				'updated_by' 	=> $getNameSession,
 			);
 
 			$sql = $this->M_transaksi->setKamarUse($where, $data3);
@@ -276,7 +288,7 @@ class C_transaksi extends CI_Controller
 				'id_mess' 			=>	$id_mess_keluarga,
 				'id_kamar' 			=>	0,
 				'created_at' 		=> 	date('Y-m-d H:i:s'),
-				'created_by' 		=> 'admin',
+				'created_by' 		=> $getNameSession,
 			);
 		}
 
@@ -287,7 +299,7 @@ class C_transaksi extends CI_Controller
 		$data2 = array(
 			'is_available' 	=> 1,
 			'updated_at' 	=> 	date('Y-m-d H:i:s'),
-			'updated_by' 	=> 'admin',
+			'updated_by' 	=> $getNameSession,
 		);
 
 		$sql = $this->M_transaksi->setKamarUse($where, $data2);
@@ -304,12 +316,15 @@ class C_transaksi extends CI_Controller
 
 	function complate($id_trx_mess)
 	{
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
 
 		$data = array(
 			'id_trx_mess' => $id_trx_mess,
 			'complate_stat'  => 1,
 			'updated_at' 	 => date('Y-m-d H:i:s'),
-			'updated_by'  	 => 'admin',
+			'updated_by'  	 => $getNameSession,
 		);
 
 		$where = array(

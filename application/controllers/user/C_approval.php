@@ -10,6 +10,7 @@ class C_approval extends CI_Controller
         $this->load->model('M_kamar');
         $this->load->model('M_transaksi');
         $this->load->helper('url');
+		is_logged_in();
     }
 
     public function index()

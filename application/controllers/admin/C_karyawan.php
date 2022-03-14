@@ -9,6 +9,7 @@ class C_karyawan extends CI_Controller
 		$this->load->model('M_karyawan');
 		$this->load->model('M_departemen');
 		$this->load->helper('url');
+		is_logged_in();
 	}
 
 	public function index()
@@ -41,6 +42,10 @@ class C_karyawan extends CI_Controller
 
 	public function save()
 	{
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
+
 		$nik 			= $this->input->post('nik_karyawan');
 		$nama 			= $this->input->post('nama_karyawan');
 		$tgl_lahir 		= $this->input->post('tgl_lahir');
@@ -57,13 +62,12 @@ class C_karyawan extends CI_Controller
 			'jenis_kelamin'	=> ucwords($jkelamin),
 			'alamat' 		=> ucwords($alamat),
 			'created_at'	=> date('Y-m-d H:i:s'),
-			'created_by'	=> 'admin',
+			'created_by'	=> $getNameSession,
 		);
 
-		$sql = $this->M_karyawan->save($data, 'tbl_mst_karyawan');
-
-		echo $sql == true ? 'success' : 'failed';
-
+		$this->M_karyawan->save($data, 'tbl_mst_karyawan');
+		// echo $sql == true ? 'success' : 'failed';
+		$this->session->set_flashdata('massage', '<div class="alert alert-success" role="alert">Sukses, data telah disimpan</div>');
 		redirect('admin/C_karyawan/index');
 	}
 
@@ -90,6 +94,10 @@ class C_karyawan extends CI_Controller
 
 	function update()
 	{
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
+
 		$id_karyawan 	= $this->input->post('id_karyawan');
 		$nik 			= $this->input->post('nik_karyawan');
 		$nama 			= $this->input->post('nama_karyawan');
@@ -107,38 +115,39 @@ class C_karyawan extends CI_Controller
 			'jenis_kelamin' => ucwords($jkelamin),
 			'alamat' 		=> ucwords($alamat),
 			'updated_at' 	=> date('Y-m-d H:i:s'),
-			'updated_by' 	=> 'admin',
+			'updated_by' 	=> $getNameSession,
 		);
 
 		$where = array(
 			'id_karyawan'	=> $id_karyawan,
 		);
 
-		$sql = $this->M_karyawan->update_data($where, $data, 'tbl_mst_karyawan');
-
-		echo $sql == true ? 'success' : 'failed';
-
+		$this->M_karyawan->update_data($where, $data, 'tbl_mst_karyawan');
+		// echo $sql == true ? 'success' : 'failed';
+		$this->session->set_flashdata('massage', '<div class="alert alert-success" role="alert">Sukses, data telah diupdate</div>');
 		redirect('admin/C_karyawan/index');
 	}
 
 	function delete($id_karyawan)
 	{
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
 
 		$data = array(
 			'id_karyawan' 	=> $id_karyawan,
 			'status' 		=> 0,
 			'updated_at' 	=> date('Y-m-d H:i:s'),
-			'updated_by' 	=> 'admin',
+			'updated_by' 	=> $getNameSession,
 		);
 
 		$where = array(
 			'id_karyawan'	=> $id_karyawan,
 		);
 
-		$sql = $this->M_karyawan->delete_data($where, $data, 'tbl_mst_karyawan');
-
-		echo $sql == true ? 'success' : 'failed';
-
+		$this->M_karyawan->delete_data($where, $data, 'tbl_mst_karyawan');
+		// echo $sql == true ? 'success' : 'failed';
+		$this->session->set_flashdata('massage', '<div class="alert alert-success" role="alert">Sukses, data telah dihapus</div>');
 		redirect('admin/C_karyawan/index');
 	}
 }

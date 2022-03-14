@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, td {
+  border: 1px solid black;
+}
+</style>
+</head>
+<body>
+
+<p>Click the button to add a new row at the first position of the table and then add cells and content.</p>
+
+
+<select>
+	<option value="">Type mess</option>
+    <option value="lajang">Lajang</option>
+    <option value="keluarga">Keluarga</option>
+</select>
+<br><br>
+
+<select>
+	<option value="">Kategori mess</option>
+    <option value="lajang">Laki-laki</option>
+    <option value="keluarga">Perempuan</option>
+</select>
+<br><br>
+
+<label>Nama Mess</label>
+<input type="text" id="nama_mess" name="nama_mess">
+<br><br>
+
+
+<table id="myTable">
+  <tr>
+    <td>
+    	<input type="text" id="kata" name="kata" class="inputan">
+    </td>
+    <td id="button">
+        <button  type="button" onclick="myFunctionDelete(this)">hapus</button>
+    </td>
+  </tr>
+</table>
+<br>
+<button type="button" onclick="myFunctionAdd()">tambah</button>
+
+<script>
+function myFunctionAdd() {
+
+  var table = document.getElementById("myTable");
+  
+  var row = table.insertRow();
+  var cell1 = row.insertCell(0);
+  var cell2 = row.insertCell(1);
+  cell1.innerHTML = '<input type="text" id="kata" name="kata" class="inputan">';
+  cell2.innerHTML = '<button  type="button" onclick="myFunctionDelete(this)">hapus</button>';
+}
+
+function myFunctionDelete(ip) {
+	var tr = ip.parentNode.parentNode;
+    tr.parentNode.removeChild(tr);
+}
+</script>
+
+</body>
+</html>

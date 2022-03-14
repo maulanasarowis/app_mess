@@ -8,6 +8,7 @@ class C_departemen extends CI_Controller
 		parent::__construct();
 		$this->load->model('M_departemen');
 		$this->load->helper('url');
+		is_logged_in();
 	}
 
 	public function index()
@@ -39,6 +40,10 @@ class C_departemen extends CI_Controller
 
 	public function save()
 	{
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
+
 		$nama_dept 		= $this->input->post('nama_departemen');
 		$singkatan_dept	= $this->input->post('singkatan_departemen');
 
@@ -46,13 +51,13 @@ class C_departemen extends CI_Controller
 			'nama_departemen' 		=> ucwords($nama_dept),
 			'singkatan_departemen' 	=> strtoupper($singkatan_dept),
 			'created_at' 			=> date('Y-m-d H:i:s'),
-			'created_by' 			=> 'admin',
+			'created_by' 			=> $getNameSession,
 		);
-		$sql = $this->M_departemen->save($data, 'tbl_mst_departemen');
-
-		echo $sql == true ? 'success' : 'failed';
-
+		$this->M_departemen->save($data, 'tbl_mst_departemen');
+		// echo $sql == true ? 'success' : 'failed';
+		$this->session->set_flashdata('massage', '<div class="alert alert-success" role="alert">Sukses, data telah disimpan</div>');
 		redirect('admin/C_departemen/index');
+
 	}
 
 	public function edit($id_departemen)
@@ -72,6 +77,10 @@ class C_departemen extends CI_Controller
 
 	function update()
 	{
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
+
 		$id_dept 		= $this->input->post('id_departemen');
 		$nama_dept 		= $this->input->post('nama_departemen');
 		$singkatan_dept = $this->input->post('singkatan_departemen');
@@ -80,37 +89,39 @@ class C_departemen extends CI_Controller
 			'nama_departemen' 		=> ucwords($nama_dept),
 			'singkatan_departemen' 	=> strtoupper($singkatan_dept),
 			'updated_at' 			=> date('Y-m-d H:i:s'),
-			'updated_by'			=> 'admin',
+			'updated_by'			=> $getNameSession,
 		);
 		$where = array(
 			'id_departemen'	=> $id_dept,
 		);
 
-		$sql = $this->M_departemen->update_data($where, $data, 'tbl_mst_departemen');
-
-		echo $sql == true ? 'success' : 'failed';
-
+		$this->M_departemen->update_data($where, $data, 'tbl_mst_departemen');
+		// echo $sql == true ? 'success' : 'failed';
+		$this->session->set_flashdata('massage', '<div class="alert alert-success" role="alert">Sukses, data telah diupdate</div>');
 		redirect('admin/C_departemen/index');
 	}
 
 	function delete($id_departemen)
 	{
 
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
+		
 		$data = array(
 			'id_departemen' => $id_departemen,
 			'status' 		=> 0,
 			'updated_at' 	=> date('Y-m-d H:i:s'),
-			'updated_by' 	=> 'admin',
+			'updated_by' 	=> $getNameSession,
 		);
 
 		$where = array(
 			'id_departemen'	=> $id_departemen,
 		);
 
-		$sql = $this->M_departemen->delete_data($where, $data, 'tbl_mst_departemen');
-
-		echo $sql == true ? 'success' : 'failed';
-
+		$this->M_departemen->delete_data($where, $data, 'tbl_mst_departemen');
+		$this->session->set_flashdata('massage', '<div class="alert alert-success" role="alert">Sukses, data telah dihapus</div>');
+		// echo $sql == true ? 'success' : 'failed';
 		redirect('admin/C_departemen/index');
 	}
 }

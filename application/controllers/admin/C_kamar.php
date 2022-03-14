@@ -7,6 +7,7 @@ class C_kamar extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('M_kamar');
+		is_logged_in();
 	}
 
 	public function index()
@@ -26,6 +27,10 @@ class C_kamar extends CI_Controller
 
 	public function save()
 	{
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
+
 		$nomor_kamar 	= $this->input->post('nomor_kamar');
 		$kapasitas 		= $this->input->post('kapasitas');
 
@@ -33,7 +38,7 @@ class C_kamar extends CI_Controller
 			'nomor_kamar' 	=> $nomor_kamar,
 			'kapasitas' 	=> $kapasitas,
 			'created_at' 	=> date('Y-m-d H:i:s'),
-			'created_by' 	=> 'admin',
+			'created_by' 	=> $getNameSession,
 		);
 
 		$sql = $this->M_kamar->save($data, 'tbl_mst_kamar');

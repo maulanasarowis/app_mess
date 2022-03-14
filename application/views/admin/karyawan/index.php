@@ -12,6 +12,7 @@
                 <div class="mb-4">
                     <a href="<?= base_url('admin/C_karyawan/create'); ?>" class="btn-sm btn-primary "><i class="fas fa-plus">&nbsp;</i>Tambah Data</a>
                 </div>
+                <?= $this->session->flashdata('massage'); ?>
                 <table class="table table-striped mt-4" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>

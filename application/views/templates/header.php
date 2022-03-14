@@ -21,6 +21,9 @@
     <!-- Custom styles for this page -->
     <link href="<?= base_url('assets/'); ?>vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     
+    <!-- Sweet Alert CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.4/dist/sweetalert2.min.css" rel="stylesheet">
+    
     <!-- Bootstrap core JavaScript-->
     <script src="<?= base_url('assets/'); ?>vendor/jquery/jquery.min.js"></script>
     <script src="<?= base_url('assets/'); ?>vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

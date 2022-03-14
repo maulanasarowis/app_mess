@@ -8,6 +8,7 @@ class C_mess extends CI_Controller
 		parent::__construct();
 		$this->load->model('M_mess');
 		$this->load->model('M_kamar');
+		is_logged_in();
 	}
 
 	public function index()
@@ -39,47 +40,99 @@ class C_mess extends CI_Controller
 
 	public function save()
 	{
+	
 		$data['user'] = $this->db->get_where('users', ['email' =>
-        $this->session->userdata('email')])->row_array();
+		$this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
+		// echo "<pre>";
+		// print_r($data['user']['nama']);
+		// echo "</pre>";
+		// die;
 
 		$nama_mess 		= $this->input->post('nama_mess');
 		$alamat 		= $this->input->post('alamat');
-		$jumlah_kamar 	= $this->input->post('jkamar');
-		$qty_per_kamar  = $this->input->post('qty');
+		$kapasitas	    = $this->input->post('kapasitas');
 		$type_mess		= $this->input->post('type_mess');
-		$kategori_mess		= $this->input->post('kategori_mess');
+		$kategori_mess	= $this->input->post('kategori_mess');
+		$jumlah_kamar	= $this->input->post('jmlh_kamar');
+		$this->input->post();		
 
-		$data = array(
-			'nama_mess' 	=> ucwords($nama_mess),
-			'alamat' 		=> ucwords($alamat),
-			'jumlah_kamar' 	=> $jumlah_kamar,
-			'type_mess'		=> ucwords($type_mess),
-			'kategori_mess'	=> ucwords($kategori_mess),
-			'status' 		=> 1,
-			'created_at' 	=> date('Y-m-d H:i:s'),
-			'created_by'	=> 'admin',
-		);
-
-		$sql = $this->M_mess->save($data, 'tbl_mst_mess');
-
-		$lastID = $this->db->insert_id();
-
-		for ($i = 1; $i <= $jumlah_kamar; $i++) {
+		if ($type_mess == "lajang")
+		{
 			$data = array(
-				'id_mess' 		=> $lastID,
-				'nomor_kamar' 	=> $i,
-				'kapasitas' 	=> $qty_per_kamar,
+				'nama_mess' 	=> ucwords($nama_mess),
+				'alamat' 		=> ucwords($alamat),
+				'type_mess'		=> ucwords($type_mess),
+				'kategori_mess'	=> ucwords($kategori_mess),
+				'jumlah_kamar'	=> $jumlah_kamar,
+				'status' 		=> 1,
 				'created_at' 	=> date('Y-m-d H:i:s'),
-				'created_by' 	=> 'admin',
+				'created_by'	=> $getNameSession,
 			);
 
-			$sql_save_kamar = $this->M_kamar->save($data);
+			// echo "<pre>";
+			// print_r($data);
+			// echo "</pre>";
+
+			$sql = $this->M_mess->save($data, 'tbl_mst_mess');
+
+			$no = 1;
+			$lastID = $this->db->insert_id();
+			foreach($kapasitas as $v){
+				
+				$data = array(
+					'id_mess'		=> $lastID,
+					'nomor_kamar' 	=> $no++,
+					'kapasitas' 	=> $v,
+					'is_available' 	=> 1,
+					'created_at' 	=> date('Y-m-d H:i:s'),
+					'created_by' 	=> $getNameSession,
+				);
+
+				echo "<pre>";
+				print_r($data);
+				echo "</pre>";
+
+				$sql_save_kamar = $this->M_kamar->save($data);
+			}
+
+		} else {
+
+			$data = array(
+				'nama_mess' 	=> ucwords($nama_mess),
+				'alamat' 		=> ucwords($alamat),
+				'jumlah_kamar' 	=> 2,
+				'type_mess'		=> ucwords($type_mess),
+				'kategori_mess'	=> ucwords($kategori_mess),
+				'status' 		=> 1,
+				'created_at' 	=> date('Y-m-d H:i:s'),
+				'created_by'	=> $getNameSession,
+			);
+			$sql = $this->M_mess->save($data, 'tbl_mst_mess');
+
+			$no = 1;
+			$getJmlhKamar = $data['jumlah_kamar'];
+			var_dump($getJmlhKamar);
+			$lastID = $this->db->insert_id();
+			for ($i = 1; $i <= $getJmlhKamar; $i++) {
+				$data = array(
+					'id_mess' 		=> $lastID,
+					'nomor_kamar' 	=> $no++,
+					'kapasitas' 	=> 1,
+					'created_at' 	=> date('Y-m-d H:i:s'),
+					'created_by' 	=> $getNameSession,
+				);
+
+				$sql_save_kamar = $this->M_kamar->save($data);
+			}
 		}
+		
 
 		echo $sql == true ? 'success' : 'failed';
-
+		$this->session->set_flashdata('massage', '<div class="alert alert-success" role="alert">Sukses, data telah disimpan</div>');
 		redirect('admin/C_mess/index');
 	}
+
 
 	public function edit($id_mess)
 	{
@@ -87,7 +140,12 @@ class C_mess extends CI_Controller
 		$data['user'] = $this->db->get_where('users', ['email' =>
         $this->session->userdata('email')])->row_array();
 		$where['id_mess'] 	= $id_mess;
-		$data['mess'] 		= $this->M_mess->edit($where, 'tbl_mst_mess')->result();
+		$data['mess'] 		= $this->M_mess->edit($where, 'tbl_mst_mess')->row_array();
+
+		// echo '<pre>';
+		// print_r($data['mess']);
+		// echo '</pre>';
+		// die;
 
 		$this->load->view('templates/header',$data);
         $this->load->view('templates/sidebar',$data);
@@ -121,22 +179,24 @@ class C_mess extends CI_Controller
 
 	function delete($id_departemen)
 	{
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
 
 		$data = array(
 			'id_departemen'	=> $id_departemen,
 			'status' 		=> 0,
 			'updated_at' 	=> date('Y-m-d H:i:s'),
-			'updated_by' 	=> 'admin',
+			'updated_by' 	=> $getNameSession,
 		);
 
 		$where = array(
 			'id_departemen'	=> $id_departemen,
 		);
 
-		$sql = $this->M_departemen->delete_data($where, $data, 'tbl_mst_departemen');
-
-		echo $sql == true ? 'success' : 'failed';
-
+		$this->M_departemen->delete_data($where, $data, 'tbl_mst_departemen');
+		// echo $sql == true ? 'success' : 'failed';
+		$this->session->set_flashdata('massage', '<div class="alert alert-success" role="alert">Sukses, data telah dihapus</div>');
 		redirect('admin/C_departemen/index');
 	}
 

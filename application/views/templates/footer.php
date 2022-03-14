@@ -51,6 +51,9 @@
 <!-- Page level custom scripts -->
 <script src="<?= base_url(); ?>assets/js/demo/datatables-demo.js"></script>
 
+<!-- Sweet Alert Javascript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.4/dist/sweetalert2.all.min.js"></script>
+
 </body>
 
 </html>

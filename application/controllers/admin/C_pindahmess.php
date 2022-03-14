@@ -10,6 +10,7 @@ class C_pindahmess extends CI_Controller
         $this->load->model('M_transaksi');
         $this->load->model('M_kamar');
         $this->load->helper('url');
+		is_logged_in();
     }
 
     public function index()
@@ -75,41 +76,45 @@ class C_pindahmess extends CI_Controller
 
 	function update()
 	{
-		echo '<pre>';
-		print_r($this->input->post());
-		echo '<pre>';
+		// echo '<pre>';
+		// print_r($this->input->post());
+		// echo '<pre>';
 		// echo 'halamann update';
-		$id_trx_mess 	= $this->input->post('id_trx_mess');
-		$id_karyawan 	= $this->input->post('id_karyawan');
-		$id_mess_keluarga 		= $this->input->post('id_mess_keluarga');
-		$id_mess_lajanglk 		= $this->input->post('id_mess_lajanglk');
-		$id_mess_lajangpr 		= $this->input->post('id_mess_lajangpr');
-		$id_kamar 		= $this->input->post('id_kamar');
-		$type_mess 		= $this->input->post('type_mess');
-		$jkelamin 		= $this->input->post('jkelamin');
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession 	= $data['user']['nama'];
+
+		$id_trx_mess 		= $this->input->post('id_trx_mess');
+		$id_karyawan 		= $this->input->post('id_karyawan');
+		$id_mess_keluarga 	= $this->input->post('id_mess_keluarga');
+		$id_mess_lajanglk 	= $this->input->post('id_mess_lajanglk');
+		$id_mess_lajangpr 	= $this->input->post('id_mess_lajangpr');
+		$id_kamar 			= $this->input->post('id_kamar');
+		$type_mess 			= $this->input->post('type_mess');
+		$jkelamin 			= $this->input->post('jkelamin');
 		$old_keluarga 		= $this->input->post('old_keluarga');
-		$old_kamar 		= $this->input->post('old_kamar');
+		$old_kamar 			= $this->input->post('old_kamar');
 
 		if ($type_mess == 'Lajang') {
 			if ($jkelamin == 'Laki-laki') {
 				$data = array(
-					'id_karyawan' 		=> 	$id_karyawan,
-					'id_mess' 			=>	$id_mess_lajanglk,
-					'id_kamar' 			=>	$id_kamar,
+					'id_karyawan' 		=> $id_karyawan,
+					'id_mess' 			=> $id_mess_lajanglk,
+					'id_kamar' 			=> $id_kamar,
                     'complate_stat'     => 1,
                     'approve_status'    => 0,
-					'created_at' 		=> 	date('Y-m-d H:i:s'),
-					'created_by' 		=> 'admin',
+					'created_at' 		=> date('Y-m-d H:i:s'),
+					'created_by' 		=> $getNameSession,
 				);
 			} else if ($jkelamin == 'Perempuan') {
 				$data = array(
-					'id_karyawan' 		=> 	$id_karyawan,
-					'id_mess' 			=>	$id_mess_lajangpr,
-					'id_kamar' 			=>	$id_kamar,
+					'id_karyawan' 		=> $id_karyawan,
+					'id_mess' 			=> $id_mess_lajangpr,
+					'id_kamar' 			=> $id_kamar,
                     'complate_stat'     => 1,
                     'approve_status'    => 0,
-					'created_at' 		=> 	date('Y-m-d H:i:s'),
-					'created_by' 		=> 'admin',
+					'created_at' 		=> date('Y-m-d H:i:s'),
+					'created_by' 		=> $getNameSession,
 				);
 			}
 
@@ -120,20 +125,20 @@ class C_pindahmess extends CI_Controller
 
 			$data3 = array(
 				'is_available' 	=> 0,
-				'updated_at' 	=> 	date('Y-m-d H:i:s'),
-				'updated_by' 	=> 'admin',
+				'updated_at' 	=> date('Y-m-d H:i:s'),
+				'updated_by' 	=> $getNameSession,
 			);
 
 			$sql = $this->M_transaksi->setKamarUse($where, $data3);
 		} else if ($type_mess == 'Keluarga') {
 			$data = array(
-				'id_karyawan' 		=> 	$id_karyawan,
-				'id_mess' 			=>	$id_mess_keluarga,
-				'id_kamar' 			=>	0,
+				'id_karyawan' 		=> $id_karyawan,
+				'id_mess' 			=> $id_mess_keluarga,
+				'id_kamar' 			=> 0,
                 'complate_stat'     => 1,
                 'approve_status'    => 0,
-				'created_at' 		=> 	date('Y-m-d H:i:s'),
-				'created_by' 		=> 'admin',
+				'created_at' 		=> date('Y-m-d H:i:s'),
+				'created_by' 		=> $getNameSession,
 			);
 		}
 
@@ -143,8 +148,8 @@ class C_pindahmess extends CI_Controller
 
 		$data2 = array(
 			'is_available' 	=> 1,
-			'updated_at' 	=> 	date('Y-m-d H:i:s'),
-			'updated_by' 	=> 'admin',
+			'updated_at' 	=> date('Y-m-d H:i:s'),
+			'updated_by' 	=> $getNameSession,
 		);
 
 		$sql = $this->M_transaksi->setKamarUse($where, $data2);
