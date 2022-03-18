@@ -19,4 +19,10 @@ class M_kamar extends CI_Model
     {
         return $this->db->get_where($_table, $where);
     }
+
+    function update_data($where, $data, $_table)
+    {
+        $this->db->where($where);
+        $this->db->update($_table, $data);
+    }
 }

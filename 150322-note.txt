@@ -1,0 +1,19 @@
+1. edit master mess type "lajang"
+2. transaksi mess add penghuni mess
+3. select nomor kamar
+	- ketika melakuakan transaksi insert 1 pehuni
+	- jika kapasitas tidak sama dengan penghuni maka tampilkan
+	- jika kapasitas sama dengan penghuni maka tidak tampilkan
+
+note
+1. edit master mess type "lajang"
+2. edit transaksi mess type "lajang"
+3. tampikan informasi pada dashboard
+	- total mess
+		+keluarga
+		+lajang (perempuan dan laki-laki)
+	- total kamar
+		+ kamar tersedia
+		+ kamar terpakai
+	- total karyawan
+	- total departemen

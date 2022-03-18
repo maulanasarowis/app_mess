@@ -19,6 +19,7 @@
                             <th>No.</th>
                             <th>Nomor Kamar</th>
                             <th>Kapasitas</th>
+                            <th>Penghuni</th>
                             <th>Ketersedian</th>
                             <!-- <th>Aksi</th> -->
                         </tr>
@@ -28,8 +29,15 @@
                         <?php foreach ($kamar as $k) { ?>
                             <tr>
                                 <td><?= $i++; ?></td>
-                                <td>K-<?php echo $k->nomor_kamar ?></td>
-                                <td><?php echo $k->kapasitas ?> Orang</td>
+                                <td>K-<?= $k->nomor_kamar ?></td>
+                                <td><?= $k->kapasitas ?> Orang</td>
+                                <td>
+                                    <?php if ($k->penghuni == null || $k->penghuni == 0) {?>
+                                        Kosong
+                                    <?php } else {?>
+                                        <?= $k->penghuni ?> Orang
+                                    <?php }?>
+                                </td>
                                 <td>
                                     <a <?= 1 == $k->is_available ? 'class="btn-sm btn-success mb-3 text-light"' : 'class="btn-sm btn-danger mb-3 text-light"' ?>><?= 1 == $k->is_available ? 'Available' : 'No Available' ?></a>
                                 </td>

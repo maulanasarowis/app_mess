@@ -70,10 +70,6 @@ class C_mess extends CI_Controller
 				'created_by'	=> $getNameSession,
 			);
 
-			// echo "<pre>";
-			// print_r($data);
-			// echo "</pre>";
-
 			$sql = $this->M_mess->save($data, 'tbl_mst_mess');
 
 			$no = 1;
@@ -88,10 +84,6 @@ class C_mess extends CI_Controller
 					'created_at' 	=> date('Y-m-d H:i:s'),
 					'created_by' 	=> $getNameSession,
 				);
-
-				echo "<pre>";
-				print_r($data);
-				echo "</pre>";
 
 				$sql_save_kamar = $this->M_kamar->save($data);
 			}
@@ -136,14 +128,15 @@ class C_mess extends CI_Controller
 
 	public function edit($id_mess)
 	{
-		$data['title'] = 'Ubah Data Mess';
-		$data['user'] = $this->db->get_where('users', ['email' =>
+		$data['title'] 	= 'Ubah Data Mess';
+		$data['user'] 	= $this->db->get_where('users', ['email' =>
         $this->session->userdata('email')])->row_array();
 		$where['id_mess'] 	= $id_mess;
 		$data['mess'] 		= $this->M_mess->edit($where, 'tbl_mst_mess')->row_array();
+		$data['kamar']		= $this->M_kamar->getAllKamarByIdMess($where, 'tbl_mst_kamar')->result();
 
 		// echo '<pre>';
-		// print_r($data['mess']);
+		// print_r($data['kamar']);
 		// echo '</pre>';
 		// die;
 
@@ -156,42 +149,105 @@ class C_mess extends CI_Controller
 
 	function update()
 	{
-		$id_mess 	= $this->input->post('id_mess');
-		$nama_mess 	= $this->input->post('nama_mess');
-		$alamat 	= $this->input->post('alamat');
+		$data['user'] = $this->db->get_where('users', ['email' =>
+        $this->session->userdata('email')])->row_array();
+		$getNameSession = $data['user']['nama'];
 
-		$data = array(
-			'id_mess' 	=> $id_mess,
-			'nama_mess' => ucwords($nama_mess),
-			'alamat' 	=> ucwords($alamat)
-		);
+		$id_mess 		= $this->input->post('id_mess');
+		$nama_mess 		= $this->input->post('nama_mess');
+		$alamat 		= $this->input->post('alamat');
+		$type_mess		= $this->input->post('type_mess');
+		$kapasitas	    = $this->input->post('kapasitas');
+		$kategori_mess	= $this->input->post('kategori_mess');
+		$jumlah_kamar	= $this->input->post('jmlh_kamar');
+		$this->input->post();		
 
-		$where = array(
-			'id_mess'	=> $id_mess,
-		);
+		if ($type_mess == "Keluarga") {
 
-		$sql = $this->M_mess->update_data($where, $data, 'tbl_mst_mess');
+			$data = array(
+				'id_mess' 		=> $id_mess,
+				'nama_mess' 	=> ucwords($nama_mess),
+				'alamat' 		=> ucwords($alamat),
+				'updated_at' 	=> date('Y-m-d H:i:s'),
+				'updated_by' 	=> $getNameSession,
+			);
+	
+			$where = array(
+				'id_mess'	=> $id_mess,
+			);
+	
+			$sql = $this->M_mess->update_data($where, $data, 'tbl_mst_mess');
+			
+		} else {
+			// ------------
+			$data = array(
+				'id_mess' 		=> $id_mess,
+				'nama_mess' 	=> ucwords($nama_mess),
+				'alamat' 		=> ucwords($alamat),
+				'updated_at' 	=> date('Y-m-d H:i:s'),
+				'updated_by' 	=> $getNameSession,
+			);
+	
+			$where = array(
+				'id_mess'	=> $id_mess,
+			);
+	
+			$sql = $this->M_mess->update_data($where, $data, 'tbl_mst_mess');
 
-		echo $sql == true ? 'success' : 'failed';
+			echo '<pre>';
+			print_r($data);
+			echo '</pre>';
+			
+				$no = 1;
+				// var_dump($no);
+				foreach($kapasitas as $v){
+					
+					$data = array(
+						'id_mess'		=> $id_mess,
+						'nomor_kamar' 	=> $no++,
+						'kapasitas' 	=> $v,
+						'is_available' 	=> 1,
+						'created_at' 	=> date('Y-m-d H:i:s'),
+						'created_by' 	=> $getNameSession,
+					);
 
-		redirect('admin/C_mess/index');
+					$where = array(
+						'id_mess'	=> $id_mess,
+					);
+					
+					$sql_save_kamar = $this->M_kamar->update_data($where, $data, 'tbl_mst_kamar');
+					echo '<pre>';
+					print_r($data);
+					echo '</pre>';
+					// die;
+					
+				}
+			die;
+			// ================
+		}
+			
+			$this->session->set_flashdata('massage', '<div class="alert alert-success" role="alert">Sukses, data telah diupdate</div>');
+			
+			echo $sql == true ? 'success' : 'failed';
+
+			redirect('admin/C_mess/index');
 	}
 
-	function delete($id_departemen)
+	function delete($id_mess)
 	{
 		$data['user'] = $this->db->get_where('users', ['email' =>
         $this->session->userdata('email')])->row_array();
 		$getNameSession = $data['user']['nama'];
 
 		$data = array(
-			'id_departemen'	=> $id_departemen,
+			'id_mess'	=> $id_mess,
 			'status' 		=> 0,
 			'updated_at' 	=> date('Y-m-d H:i:s'),
 			'updated_by' 	=> $getNameSession,
 		);
 
 		$where = array(
-			'id_departemen'	=> $id_departemen,
+			'id_mess'	=> $id_mess,
 		);
 
 		$this->M_departemen->delete_data($where, $data, 'tbl_mst_departemen');

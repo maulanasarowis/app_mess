@@ -44,6 +44,12 @@
                     </div>
                     <form action="<?= base_url('admin/C_mess/update'); ?>" method="POST" enctype="multipart/form-data">
                         <!-- crsf -->
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="id_mess" name="id_mess" value="<?= $mess['id_mess']; ?>" hidden>
+                        </div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="type_mess" name="type_mess" value="<?= $mess['type_mess']; ?>" hidden>
+                        </div>
                         <div class="col-sm-6 mb-2">
                             <label for="alamat" class="col-form-label">Type Mess</label>
                             <div class="input-group">
@@ -84,7 +90,7 @@
                             </div>
                         </div> -->
 
-                        <div id="type_mess" onchange="typeMess()">
+                        <div id="type_mess" onsubmit="typeMess()">
                             <div id="tampil">
                             </div>
                         </div>
@@ -109,19 +115,20 @@ $(document).ready(function() {
     typeMess();
 });
     function typeMess() {
-        // console.log(rowCountResult);
         var valTypeMess = $('#type_mess').val();
-        // alert(valTypeMess);
-        // console.log(valTypeMess)
         if (valTypeMess == 'Lajang') {
             document.getElementById('tampil').innerHTML = `
+                <form action="<?= base_url('admin/C_mess/update'); ?>" method="POST" enctype="multipart/form-data">
                     <div class="col-sm-6 mb-3">
                         <label for="kategori" class="col-form-label">Kategori Mess</label>
                             <div class="input-group">
-                                <select name="kategori_mess" class="custom-select" id="kategori_mess" aria-label="Example select with button addon" required>
+                                <select name="kategori_mess" class="custom-select" id="kategori_mess" aria-label="Example select with button addon" required disabled>
                                     <option selected disabled>Pilih Kategori Mess</option>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
+                                    <?php if ($mess['kategori_mess'] == 'Laki-laki') { ?>
+                                        <option selected value="<?= $mess['kategori_mess']; ?>"><?= $mess['kategori_mess']; ?></option>
+                                    <?php } else { ?>
+                                        <option selected value="<?= $mess['kategori_mess']; ?>"><?= $mess['kategori_mess']; ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
                     </div>
@@ -146,19 +153,22 @@ $(document).ready(function() {
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php foreach ($kamar as $k) { ?>
                                 <tr>
-                                    <td id="nomor" value="">1</td>
-                                    <td><input class="form-control" type="text" id="no_kamar" name="no_kamar[]" value="Kamar-1" readonly></td>
+                                    <td id="nomor"><?=$k->nomor_kamar?></td>
+                                    <td><input class="form-control" type="text" id="no_kamar" name="no_kamar[]" value="Kamar-<?=$k->nomor_kamar?>" readonly></td>
                                     <td>
                                         <div class="row ">
-                                            <input class="form-control col-8" type="number" id="kapasitas" name="kapasitas[]" >
+                                            <input class="form-control col-8" type="number" id="kapasitas" name="kapasitas[]" value="<?=$k->kapasitas?>">
                                             <p class="text-align-justify">&nbsp Orang<p/>
                                         </div>
                                     </td>
                                     <td id="button" class="text-center">
                                         <button  type="button" class="btn-sm btn-danger mb-3 fas fa-trash" onclick="myFunctionDelete(this)"></button>
                                     </td>
+                                    <input type="text" class="form-control text-capitalize" id="jmlh_kamar" name="jmlh_kamar" value="<?=$k->nomor_kamar?>" autofocus hidden>
                                 </tr>
+                                <?php } ?>
                             </tbody>
                         </table>
                     </div>
@@ -168,10 +178,11 @@ $(document).ready(function() {
                     <br>
                     <button type="reset" class="btn-sm btn-warning mt-3">Reset</button>
                     <button type="submit" class="btn-sm btn-success mt-3">Simpan</button>
-                    
+                </form>
                     `;
         } else if (valTypeMess == 'Keluarga') {
             document.getElementById('tampil').innerHTML = `
+                <form action="<?= base_url('admin/C_mess/update'); ?>" method="POST" enctype="multipart/form-data">
                     <div class="col-sm-6 mb-2">
                         <label for="nama_mess" class="col-form-label">Nama Mess</label>
                         <input type="text" class="form-control text-capitalize" id="nama_mess" name="nama_mess" value="<?=$mess['nama_mess']?>" autofocus required>
@@ -184,8 +195,8 @@ $(document).ready(function() {
                     </div>
                     <br>
                     <button type="reset" class="btn-sm btn-warning mt-3">Reset</button>
-                    <button type="submit" class="btn-sm btn-success mt-3">Simpan</button>
-                    
+                    <button type="submit" class="btn-sm btn-success mt-3">Update</button>
+                </form>
                     `;
         }
     }

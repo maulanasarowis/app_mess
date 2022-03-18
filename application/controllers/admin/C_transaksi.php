@@ -56,14 +56,14 @@ class C_transaksi extends CI_Controller
 				'id_mess' 			=>	$id_mess,
 				'id_kamar' 			=>	$id_kamar,
 				'created_at' 		=> 	date('Y-m-d H:i:s'),
-				'created_by' 		=> $getNameSession,
+				'created_by' 		=> 	$getNameSession,
 			);
 		} else {
 			$data = array(
 				'id_karyawan' 		=> 	$id_karyawan,
 				'id_mess' 			=>	$id_mess,
 				'created_at' 		=> 	date('Y-m-d H:i:s'),
-				'created_by' 		=> $getNameSession,
+				'created_by' 		=> 	$getNameSession,
 			);
 		}
 
@@ -75,19 +75,53 @@ class C_transaksi extends CI_Controller
 				window.location.href='" . base_url('admin/C_transaksi/index') . "';
 				</script>";
 		} else {
+
+			$check_penghuni['cekpenghuni'] = $this->db->query("SELECT penghuni from tbl_mst_kamar WHERE id_kamar = '" .$id_kamar. "' ")->row();
+			$get_data_kapasitas['getkapasitas'] = $this->db->query("SELECT kapasitas from tbl_mst_kamar WHERE id_kamar = '" .$id_kamar. "' ")->row();
+			// var_dump($check_penghuni['cekpenghuni']);
+			// var_dump($get_data_kapasitas['getkapasitas']);
+			$last_penghuni = $check_penghuni['cekpenghuni']->penghuni;
+			// var_dump($last_penghuni);
+
 			$sql = $this->M_transaksi->save($data, 'tbl_trx_mess');
+
+			// insert penghuni 1
+			// jalankan jika kapasitas sama dengan penghuni
+			$data = array(
+				'penghuni' 		=> $last_penghuni+1,
+				'updated_at' 	=> date('Y-m-d H:i:s'),
+				'updated_by' 	=> $getNameSession,
+			);
 
 			$where = array(
 				'id_kamar' => $id_kamar,
 			);
 
-			$data = array(
-				'is_available' 	=> 0,
-				'updated_at' 	=> 	date('Y-m-d H:i:s'),
-				'updated_by' 	=> $getNameSession,
-			);
+			// $data = array(
+			// 	'penghuni' 		=> +1,
+			// 	'updated_at' 	=> date('Y-m-d H:i:s'),
+			// 	'updated_by' 	=> $getNameSession,
+			// );
 
 			$sql = $this->M_transaksi->setKamarUse($where, $data);
+
+			$check_last_penghuni['cekpenghuni'] = $this->db->query("SELECT penghuni from tbl_mst_kamar WHERE id_kamar = '" .$id_kamar. "' ")->row();
+
+			if ($check_last_penghuni['cekpenghuni']->penghuni == $get_data_kapasitas['getkapasitas']->kapasitas) {
+				$data = array(
+					'is_available' 	=> 0,
+					'updated_at' 	=> date('Y-m-d H:i:s'),
+					'updated_by' 	=> $getNameSession,
+				);
+
+				$where = array(
+					'id_kamar' => $id_kamar,
+				);
+
+				$sql = $this->M_transaksi->setKamarUse($where, $data);
+	
+			}
+			// -----------
 			echo $sql == true ? 'success' : 'failed';
 
 			redirect('admin/C_transaksi/index');
@@ -277,11 +311,50 @@ class C_transaksi extends CI_Controller
 
 			$data3 = array(
 				'is_available' 	=> 0,
-				'updated_at' 	=> 	date('Y-m-d H:i:s'),
+				'updated_at' 	=> date('Y-m-d H:i:s'),
 				'updated_by' 	=> $getNameSession,
 			);
 
 			$sql = $this->M_transaksi->setKamarUse($where, $data3);
+
+			// ----------------------------------
+			// $check_penghuni['cekpenghuni'] = $this->db->query("SELECT penghuni from tbl_mst_kamar WHERE id_kamar = '" .$id_kamar. "' ")->row();
+			// $get_data_kapasitas['getkapasitas'] = $this->db->query("SELECT kapasitas from tbl_mst_kamar WHERE id_kamar = '" .$id_kamar. "' ")->row();
+			// $last_penghuni = $check_penghuni['cekpenghuni']->penghuni;
+
+			// // $sql = $this->M_transaksi->save($data, 'tbl_trx_mess');
+
+			// // insert penghuni 1
+			// // jalankan jika kapasitas sama dengan penghuni
+			// $data3 = array(
+			// 	'penghuni' 		=> $last_penghuni+1,
+			// 	'updated_at' 	=> date('Y-m-d H:i:s'),
+			// 	'updated_by' 	=> $getNameSession,
+			// );
+
+			// $where = array(
+			// 	'id_kamar' => $id_kamar,
+			// );
+
+			// $sql = $this->M_transaksi->setKamarUse($where, $data3);
+
+			// $check_last_penghuni['cekpenghuni'] = $this->db->query("SELECT penghuni from tbl_mst_kamar WHERE id_kamar = '" .$id_kamar. "' ")->row();
+
+			// if ($check_last_penghuni['cekpenghuni']->penghuni == $get_data_kapasitas['getkapasitas']->kapasitas) {
+			// 	$data = array(
+			// 		'is_available' 	=> 0,
+			// 		'updated_at' 	=> date('Y-m-d H:i:s'),
+			// 		'updated_by' 	=> $getNameSession,
+			// 	);
+
+			// 	$where = array(
+			// 		'id_kamar' => $id_kamar,
+			// 	);
+
+			// 	$sql = $this->M_transaksi->setKamarUse($where, $data);
+	
+			// }
+			// ------------------------------------
 		} else if ($type_mess == 'Keluarga') {
 			$data = array(
 				'id_karyawan' 		=> 	$id_karyawan,
@@ -291,6 +364,8 @@ class C_transaksi extends CI_Controller
 				'created_by' 		=> $getNameSession,
 			);
 		}
+
+		// ---------
 
 		$where = array(
 			'id_kamar' => $old_kamar,
@@ -304,14 +379,57 @@ class C_transaksi extends CI_Controller
 
 		$sql = $this->M_transaksi->setKamarUse($where, $data2);
 
+		// ------------
+
+		// --------
+		// $check_penghuni['cekpenghuni'] = $this->db->query("SELECT penghuni from tbl_mst_kamar WHERE id_kamar = '" .$old_kamar. "' ")->row();
+		// $get_data_kapasitas['getkapasitas'] = $this->db->query("SELECT kapasitas from tbl_mst_kamar WHERE id_kamar = '" .$old_kamar. "' ")->row();
+		// $last_penghuni = $check_penghuni['cekpenghuni']->penghuni;
+
+		// 	$sql = $this->M_transaksi->save($data, 'tbl_trx_mess');
+
+		// 	// insert penghuni 1
+		// 	// jalankan jika kapasitas sama dengan penghuni
+		// 	$data2 = array(
+		// 		'penghuni' 		=> $last_penghuni-1,
+		// 		'updated_at' 	=> date('Y-m-d H:i:s'),
+		// 		'updated_by' 	=> $getNameSession,
+		// 	);
+
+		// 	$where = array(
+		// 		'id_kamar' => $old_kamar,
+		// 	);
+
+		// 	$sql = $this->M_transaksi->setKamarUse($where, $data2);
+
+		// 	$check_last_penghuni['cekpenghuni'] = $this->db->query("SELECT penghuni from tbl_mst_kamar WHERE id_kamar = '" .$old_kamar. "' ")->row();
+		// 	// var_dump($check_last_penghuni['cekpenghuni']);
+		// 	// die;
+
+		// 	if ($check_last_penghuni['cekpenghuni']->penghuni == $get_data_kapasitas['getkapasitas']->kapasitas) {
+		// 		$data = array(
+		// 			'is_available' 	=> 1,
+		// 			'updated_at' 	=> date('Y-m-d H:i:s'),
+		// 			'updated_by' 	=> $getNameSession,
+		// 		);
+
+		// 		$where = array(
+		// 			'id_kamar' => $old_kamar,
+		// 		);
+
+		// 		$sql = $this->M_transaksi->setKamarUse($where, $data);
+				
+		// 	}
+			// ---------
 		$where = array(
 			'id_trx_mess'	=> $id_trx_mess,
 		);
 
 		$sql = $this->M_transaksi->updateTrx($where, $data, 'tbl_trx_mess');
-
+		
 		echo $sql == true ? 'success' : 'failed';
 		redirect('admin/C_transaksi/index');
+		
 	}
 
 	function complate($id_trx_mess)

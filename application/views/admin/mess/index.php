@@ -30,11 +30,11 @@
                         <?php foreach ($mess as $m) { ?>
                             <tr>
                                 <td><?= $i++; ?></td>
-                                <td><?php echo $m->nama_mess ?></td>
-                                <td><?php echo $m->type_mess ?></td>
-                                <td><?php echo $m->kategori_mess ?></td>
-                                <td><?php echo $m->alamat ?></td>
-                                <td><?php echo $m->jumlah_kamar ?>&nbsp;Kamar</td>
+                                <td><?= $m->nama_mess ?></td>
+                                <td><?= $m->type_mess ?></td>
+                                <td><?= $m->kategori_mess ?></td>
+                                <td><?= $m->alamat ?></td>
+                                <td><?= $m->jumlah_kamar ?>&nbsp;Kamar</td>
                                 <td class="text-center">
                                     <a href="<?= base_url('admin/C_mess/detail/' . $m->id_mess); ?>" class="btn-sm btn-success mb-3"><i class="fas fa-search">&nbsp;</i></a>
                                     <a href="<?= base_url('admin/C_mess/edit/' . $m->id_mess); ?>" class="btn-sm btn-warning mb-3"><i class="fas fw fa-pencil-alt">&nbsp;</i></a>
